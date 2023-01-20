@@ -3,7 +3,7 @@ Handles searching up information.
 """
 from random import randint
 from time import sleep
-from typing import List, Set, Dict
+from typing import List, Set, Dict, Iterable
 from urllib.parse import urlparse
 
 from search_engine_parser.core.engines.google import Search as GoogleSearch
@@ -58,14 +58,27 @@ class SearchEngine:
         # Get unique URL paths
         log.info(f"Found {len(results)} total results...")
         log.info("Extracting unique results...")
+        usernames = self.extract_usernames_from_links(
+            result['links'] for result in results
+        )
+
+        # Give back the available usernames
+        log.info(f"Found {len(usernames)} unique results...")
+        return usernames
+
+    @staticmethod
+    def extract_usernames_from_links(search_results: Iterable[str]) -> Set[str]:
+        """
+        Just what the fine print says.
+        Takes a list of LinkedIn links, extracts the usernames,
+        and returns a set of UNIQUE usernames.
+        """
         usernames = set()
-        for result in results:
+        for result in search_results:
             # Parse the link
-            parse_result = urlparse(result['links'])
+            parse_result = urlparse(result)
             if parse_result.path.startswith('/in/'):
                 # Cut off the start of the path and add to the list of usernames
                 usernames.add(parse_result.path.removeprefix('/in/').split('/')[0])
 
-        # Give back the available usernames
-        log.info(f"Found {len(usernames)} unique results...")
         return usernames

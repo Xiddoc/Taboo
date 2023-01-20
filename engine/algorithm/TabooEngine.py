@@ -2,7 +2,7 @@
 The high-level API for Taboo.
 """
 from hashlib import md5
-from typing import List
+from typing import List, Set
 
 from engine.algorithm.LinkedInEngine import LinkedInEngine
 from engine.algorithm.SearchEngine import SearchEngine
@@ -26,8 +26,12 @@ class TabooEngine:
         """
         # Get the LinkedIn usernames that match our query
         log.info("Retrieving links for query...")
-        usernames = self.__search.get_links(strong_query, soft_query)
+        users = self.__search.get_links(strong_query, soft_query)
 
+        log.info("Processing users...")
+        return self.process_usernames(users)
+
+    def process_usernames(self, usernames: Set[str]) -> TabooResults:
         # For each user, extract the information from their profile
         log.info("Extracting data from results...")
         users_data = []

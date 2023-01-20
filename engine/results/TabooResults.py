@@ -9,7 +9,7 @@ from os import getcwd, mkdir
 from os.path import dirname
 from pathlib import Path
 from sys import argv
-from typing import List, Dict
+from typing import List, Dict, Optional, Iterable
 
 from config import CACHE_PATH
 
@@ -24,16 +24,29 @@ class TabooResults:
         self.data = user_data
 
     @staticmethod
-    def create_query_id(strong_query: List[str], soft_query: List[str], pages: int) -> str:
+    def create_query_id(user_list: Iterable[str],
+                        strong_query: Optional[List[str]], soft_query: Optional[List[str]], pages: int) -> str:
         """
         Takes a query and returns a unique identifier for it (as a string).
+        This will hash the query if it was inputted, or the filename if it was given.
+
+        :return: A string which deterministically hashes the input arguments.
         """
-        # Sort the queries so even if you rearrange them, it's the same
-        # However, if you change a query from strong to soft, it should change the ID
-        return \
-            str(pages) + '_' + \
-            md5(str(sorted(strong_query)).lower().encode()).hexdigest() + \
-            md5(str(sorted(soft_query)).lower().encode()).hexdigest()
+        # If we got a file as input, then we will hash by the list of usernames we got
+        if user_list:
+            # Turn the iterable to a deterministic string
+            hash_str = "".join(sorted(user_list))
+            # Hash the usernames
+            return md5(hash_str.encode()).hexdigest()
+        else:
+            # If we got a query as input
+
+            # Sort the queries so even if you rearrange them, it's the same
+            # However, if you change a query from strong to soft, it should change the ID
+            return \
+                str(pages) + '_' + \
+                md5(str(sorted(strong_query)).lower().encode()).hexdigest() + \
+                md5(str(sorted(soft_query)).lower().encode()).hexdigest()
 
     @classmethod
     def init_cache(cls) -> bool:
