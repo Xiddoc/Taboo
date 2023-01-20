@@ -1,6 +1,7 @@
 # Project-specific stuff
 *.bin
 *.xlsx
+*.txt
 
 # User-specific stuff
 .idea/**/workspace.xml
