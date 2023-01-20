@@ -1,6 +1,6 @@
 # Taboo
 
-## Liabiltiy / Warning
+## Legal / Liability
 ⚠ **Use this program on your OWN LIABILITY and for EDUCATIONAL PURPOSES ONLY** ⚠
 
 ## Summary
