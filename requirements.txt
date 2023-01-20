@@ -1,0 +1,5 @@
+linkedin-api
+search-engine-parser
+argparse
+pandas
+XlsxWriter
