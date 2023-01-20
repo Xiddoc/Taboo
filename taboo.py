@@ -20,9 +20,15 @@ if __name__ == "__main__":
     from frontend.logger import log
     log.info("Loading Taboo engine and modules...")
 
+    # Load them dynamically since large modules will take quite a while to import
+    # I'm looking at you, pandas ...
     from engine.algorithm.TabooEngine import TabooEngine
     from engine.results.TabooResults import TabooResults
     from engine.results.result_format_mapping import FMT_MAPPING
+
+    # Create cache folder for result memoization
+    if TabooResults.init_cache():
+        log.info("No cache folder found, created one...")
 
     # Make sure we got a query
     if not Args.args['query']:

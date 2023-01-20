@@ -5,7 +5,7 @@ Holds all the data found, without extra processing.
 from bz2 import compress, decompress
 from hashlib import md5
 from json import loads, dumps
-from os import getcwd
+from os import getcwd, mkdir
 from os.path import dirname
 from pathlib import Path
 from sys import argv
@@ -36,16 +36,36 @@ class TabooResults:
             md5(str(sorted(soft_query)).lower().encode()).hexdigest()
 
     @classmethod
-    def get_cache_path(cls, query_id: str) -> Path:
+    def init_cache(cls) -> bool:
         """
-        Creates the full path to the cached query file.
+        Creates the result cache folder, if it does not exist already.
+        """
+        try:
+            mkdir(cls.get_base_cache_path())
+        except OSError:
+            return False
+
+        # Folder created successfully
+        return True
+
+    @staticmethod
+    def get_base_cache_path() -> Path:
+        """
+        :return: The full path to the result cache folder.
         """
         # Get the base path
         path = dirname(argv[0])
         if not path:
             path = getcwd()
         # Build the full path to the cache
-        return Path(path, CACHE_PATH, query_id + ".bin")
+        return Path(path, CACHE_PATH)
+
+    @classmethod
+    def get_cache_path(cls, query_id: str) -> Path:
+        """
+        Creates the full path to the cached query file.
+        """
+        return cls.get_base_cache_path() / Path(query_id + ".bin")
 
     @classmethod
     def load(cls, query_id: str) -> "TabooResults":
